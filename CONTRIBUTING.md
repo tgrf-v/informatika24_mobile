@@ -1,22 +1,22 @@
 # Panduan Kontribusi Proyek Inventaris Laboratorium
 
-Selamat datang! Dokumen ini adalah panduan praktis untuk seluruh anggota kelas agar proses pengerjaan tugas bersama berjalan lancar, tanpa bentrok kode (merge conflict), dan dinilai rapi oleh dosen.
+Selamat datang tim mahasiswa! Repositori ini telah disiapkan oleh **Tegar Rifa'i (Project Manager)** dengan struktur folder modular dan kerangka awal.
 
 ---
 
-## ⚠️ Aturan Penting Tim
-1. **Dilarang Keras Edit `lib/main.dart`**: File ini hanya boleh diedit oleh **Tegar Rifa'i** selaku Project Manager (PM) untuk rilis integrasi.
-2. **Dilarang Push ke `main`**: Semua pekerjaan wajib di branch masing-masing (`feat/...`).
-3. **Pesan Commit Wajib Bahasa Indonesia**: Gunakan format `feat(komponen): penjelasan singkat` atau `fix(komponen): perbaikan`.
-4. **Commit Modular Tiap File**: Setiap file atau komponen logis yang selesai wajib di-commit tersendiri (jangan menumpuk banyak file dalam 1 commit).
-5. **Prinsip Ponytail**: Tulis kode seringkas dan serapi mungkin tanpa dependensi berlebih.
+## ⚠️ Aturan Mutlak Tim
+1. **Dilarang Keras Mengedit `lib/main.dart`**: File [lib/main.dart](lib/main.dart) adalah entry point tunggal dan **hanya boleh diedit oleh Tegar Rifa'i** saat integrasi rilis.
+2. **Dilarang Push ke `main`**: Semua pekerjaan wajib di branch masing-masing.
+3. **Format Branch**: `feat/<nama-fitur>-<nama-panggilan>` (contoh: `feat/model-barang-budi`).
+4. **Pesan Commit Wajib Bahasa Indonesia**: Tulis dengan jelas (contoh: `feat(model): tambahkan model data Barang`).
+5. **Commit Wajib Modular Tiap File**: 1 file / komponen logis = 1 commit. Dilarang menumpuk banyak file dalam 1 commit.
+6. **Prinsip Ponytail**: Tulis kode seringkas mungkin (*lazy senior dev*), minim dependensi eksternal, dan wajib lolos `flutter analyze` dengan 0 error/warning.
 
 ---
 
-## 🛠️ Langkah Cepat Mulai (Git Flow)
+## 🛠️ Alur Kerja Git (Git Flow)
 
-### 1. Sinkronisasi Repo Awal
-Buka terminal di folder proyek ini:
+### 1. Ambil Perubahan Terbaru dari `main`
 ```bash
 git checkout main
 git pull origin main
@@ -25,151 +25,137 @@ git pull origin main
 ### 2. Buat Branch Baru untuk Tugasmu
 ```bash
 git checkout -b feat/<nama-fitur>-<nama-panggilanmu>
-# Contoh: git checkout -b feat/search-bar-budi
 ```
 
 ### 3. Gunakan AI Coding Assistant
-Buka editor (Cursor / VS Code Copilot / dsb). AI akan otomatis membaca panduan dari file [AGENTS.md](file:///d:/Proyek/Mobile/informatika24_mobile/AGENTS.md). **Copy prompt khusus tugasmu dari tabel di bawah** dan paste ke AI-mu.
+Buka editor (Cursor / VS Code Copilot / ChatGPT / Antigravity). AI akan otomatis membaca panduan dari file [AGENTS.md](AGENTS.md). **Copy prompt khusus tugasmu dari tabel di bawah** dan paste ke AI-mu.
 
-### 4. Uji Kode
+### 4. Cek & Uji Kode
 ```bash
 flutter analyze
 flutter run
 ```
 > Pastikan `flutter analyze` menghasilkan **No issues found!**
 
-### 5. Simpan (Commit) & Unggah (Push)
-Gunakan Bahasa Indonesia pada pesan commit:
+### 5. Commit & Push ke GitHub
 ```bash
-git add <file-yang-diubah>
-git commit -m "feat(<fitur>): <penjelasan dalam bahasa indonesia>"
+git add <file-yang-kamu-buat>
+git commit -m "feat(<komponen>): <penjelasan dalam bahasa indonesia>"
 git push -u origin feat/<nama-fitur>-<nama-panggilanmu>
 ```
 
 ### 6. Buka Pull Request (PR) di GitHub
-1. Buka repo di GitHub.
-2. Klik **Compare & pull request** ke branch `main`.
-3. Isi form template PR yang otomatis muncul (deskripsi & screenshot).
+1. Buka repo di GitHub, klik tombol **Compare & pull request**.
+2. Pastikan target base branch adalah `main`.
+3. Template PR akan otomatis muncul, isi ringkasan fitur dan lampirkan screenshot aplikasi yang berjalan.
 4. Beritahu PM (Tegar) untuk di-review.
 
 ---
 
-## 📋 Daftar Tugas & Prompt Siap Pakai untuk AI
+## 📋 Pembagian 16 Tugas & Prompt Siap Pakai untuk AI
 
-Pilih **satu** nomor tugas di bawah ini yang belum diambil teman lain:
+Silakan pilih **satu tugas** yang belum diambil oleh teman lain:
 
 ---
 
-### Track A: Penyimpanan Data & Layanan
+### Bagian 1: Pondasi Materi Dosen (Tahap 0 s.d. 6 & SQLite)
 
-#### Tugas 01: Service SharedPreferences (Tahap 6)
+#### Tugas 01: Tahap 0 & Pembuatan Model Barang
+> **Branch:** `feat/model-barang-<namamu>`  
+> **Target File:** `lib/models/barang.dart`  
+> **Prompt untuk AI:**
+> *"Tolong buat model data `Barang` di file baru `lib/models/barang.dart`. Model ini memiliki properti `kode` (String), `nama` (String), dan `stok` (int). Sediakan konstruktor dengan named parameters required, method `copyWith`, `toJson()`, dan factory `fromJson()`. Jangan sentuh `lib/main.dart`. Pastikan kode ringkas sesuai prinsip Ponytail dan lolos `flutter analyze`."*
+
+#### Tugas 02: Tahap 1 & State Awal List Inventaris
+> **Branch:** `feat/state-awal-<namamu>`  
+> **Target File:** `lib/screens/inventaris_screen.dart`  
+> **Prompt untuk AI:**
+> *"Tolong buat StatefulWidget `InventarisScreen` di file baru `lib/screens/inventaris_screen.dart`. Inisialisasi daftar in-memory awal `List<Barang>` berisi 2 barang dummy (misal Mouse dan Keyboard). Tampilkan jumlah total barang awal pada Scaffold body. Jangan sentuh `lib/main.dart`. Pastikan kode bersih dan lolos `flutter analyze`."*
+
+#### Tugas 03: Tahap 2 & Tampilan List Item (Card Barang)
+> **Branch:** `feat/listview-barang-<namamu>`  
+> **Target File:** `lib/widgets/barang_card.dart` & `lib/screens/inventaris_screen.dart`  
+> **Prompt untuk AI:**
+> *"Tolong buat reusable widget `BarangCard` di `lib/widgets/barang_card.dart` yang menampilkan nama barang, kode, stok, dan callback tombol aksi edit & hapus. Kemudian di `lib/screens/inventaris_screen.dart`, tampilkan daftar barang menggunakan `ListView.builder` dengan widget `BarangCard` tersebut. Jangan ubah `lib/main.dart`."*
+
+#### Tugas 04: Tahap 3 & Form Tambah Barang
+> **Branch:** `feat/tambah-barang-<namamu>`  
+> **Target File:** `lib/screens/form_barang_screen.dart` & `lib/screens/inventaris_screen.dart`  
+> **Prompt untuk AI:**
+> *"Tolong buat halaman formulir tambah barang di `lib/screens/form_barang_screen.dart` menggunakan Form dan TextFormField (kode, nama, stok) dengan validasi tidak boleh kosong dan stok harus angka >= 0. Tambahkan FloatingActionButton (+) di `lib/screens/inventaris_screen.dart` untuk membuka form tersebut dan menambahkan barang baru ke list dengan pengecekan kode unik. Jangan ubah `lib/main.dart`."*
+
+#### Tugas 05: Tahap 4 & Logika Ubah / Edit Barang
+> **Branch:** `feat/ubah-barang-<namamu>`  
+> **Target File:** `lib/screens/form_barang_screen.dart` & `lib/screens/inventaris_screen.dart`  
+> **Prompt untuk AI:**
+> *"Tolong kembangkan `lib/screens/form_barang_screen.dart` agar bisa menerima parameter barang yang sudah ada untuk diedit (mode ubah barang dengan kode bersifat read-only). Sambungkan aksi tombol edit pada item barang di `lib/screens/inventaris_screen.dart` agar membuka form dan memperbarui data yang tersimpan. Jangan ubah `lib/main.dart`."*
+
+#### Tugas 06: Tahap 5 & Logika Hapus Barang + Dialog Konfirmasi
+> **Branch:** `feat/hapus-barang-<namamu>`  
+> **Target File:** `lib/widgets/konfirmasi_hapus_dialog.dart` & `lib/screens/inventaris_screen.dart`  
+> **Prompt untuk AI:**
+> *"Tolong buat reusable dialog konfirmasi di `lib/widgets/konfirmasi_hapus_dialog.dart`. Hubungkan tombol hapus pada kartu barang di `lib/screens/inventaris_screen.dart` agar memunculkan konfirmasi dialog sebelum menghapus item dari list. Tampilkan SnackBar feedback setelah barang berhasil dihapus. Jangan ubah `lib/main.dart`."*
+
+#### Tugas 07: Tahap 6 & Penyimpanan SharedPreferences
 > **Branch:** `feat/shared-preferences-<namamu>`  
-> **File Sasaran:** `lib/services/pref_service.dart`  
+> **Target File:** `lib/services/pref_service.dart`  
 > **Prompt untuk AI:**
-> *"Tolong lengkapi implementasi penyimpanan SharedPreferences pada file `lib/services/pref_service.dart` sesuai materi Tahap 6. Gunakan package `shared_preferences` untuk menyimpan dan memuat data `Barang` ke JSON string. Jangan ubah `lib/main.dart`. Pastikan kode ringkas sesuai prinsip Ponytail dan lolos `flutter analyze`."*
+> *"Tolong buat layer penyimpanan lokal menggunakan package `shared_preferences` di `lib/services/pref_service.dart`. Buat method async untuk menyimpan daftar barang ke JSON string dan memuatnya kembali saat aplikasi dibuka. Sambungkan service ini ke `lib/screens/inventaris_screen.dart`. Jangan ubah `lib/main.dart`."*
 
-#### Tugas 02: Service SQLite Native (Referensi Native)
+#### Tugas 08: Referensi Native & Penyimpanan SQLite
 > **Branch:** `feat/sqlite-storage-<namamu>`  
-> **File Sasaran:** `lib/services/sqlite_service.dart`  
+> **Target File:** `lib/services/sqlite_service.dart`  
 > **Prompt untuk AI:**
-> *"Tolong lengkapi implementasi database SQLite pada file `lib/services/sqlite_service.dart` sesuai materi referensi native dosen menggunakan package `sqflite` dan `path`. Buat method CRUD lengkap (baca, tambah, ubah, hapus) berbasis SQLite. Jangan ubah `lib/main.dart`. Pastikan kode ringkas sesuai prinsip Ponytail dan lolos `flutter analyze`."*
+> *"Tolong buat service database SQLite menggunakan package `sqflite` dan `path` di `lib/services/sqlite_service.dart` berdasarkan materi referensi dosen. Buat tabel `barang` dan method lengkap CRUD: baca, tambah, ubah, dan hapus. Jangan ubah `lib/main.dart`."*
 
 ---
 
-### Track B: Komponen UI & Visual
+### Bagian 2: Fitur Tambahan & Ekstensi Modular
 
-#### Tugas 03: Desain Modern Card Barang & Badge Stok
-> **Branch:** `feat/ui-barang-card-<namamu>`  
-> **File Sasaran:** `lib/widgets/barang_card.dart`  
-> **Prompt untuk AI:**
-> *"Tolong percantik tampilan komponen `lib/widgets/barang_card.dart`. Tambahkan badge warna status stok: jika stok <= 2 beri badge merah 'Stok Kritis', jika 3-5 beri badge oranye 'Stok Menipis', jika > 5 beri badge hijau 'Aman'. Tambahkan icon representatif di sebelah kiri nama barang. Jangan ubah signature callback onEdit dan onDelete agar tidak merusak halaman utama."*
-
-#### Tugas 04: Validasi Form & Tampilan Form Modern
-> **Branch:** `feat/form-validation-<namamu>`  
-> **File Sasaran:** `lib/screens/form_barang_screen.dart`  
-> **Prompt untuk AI:**
-> *"Tolong tingkatkan validasi dan tampilan di `lib/screens/form_barang_screen.dart`. Gunakan validator dari `lib/utils/validators.dart`. Tambahkan validasi: panjang kode minimal 3 karakter (hanya huruf & angka), nama barang minimal 3 huruf, dan stok harus bilangan bulat positif. Berikan ikon pembantu pada InputDecoration dan buat tombol simpan lebih menarik."*
-
-#### Tugas 05: Komponen Empty State yang Menarik
-> **Branch:** `feat/empty-state-<namamu>`  
-> **File Sasaran:** `lib/widgets/empty_state_widget.dart`  
-> **Prompt untuk AI:**
-> *"Tolong kembangkan reusable widget `EmptyStateWidget` di `lib/widgets/empty_state_widget.dart`. Tampilkan visual ikon inventaris yang modern, teks informasi bahwa data belum tersedia, dan tombol aksi 'Tambah Barang Pertama' yang memicu callback ke form tambah."*
-
-#### Tugas 06: Dialog Konfirmasi & Feedback Interaktif
-> **Branch:** `feat/dialog-feedback-<namamu>`  
-> **File Sasaran:** `lib/widgets/konfirmasi_hapus_dialog.dart`  
-> **Prompt untuk AI:**
-> *"Tolong sempurnakan reusable dialog konfirmasi di `lib/widgets/konfirmasi_hapus_dialog.dart` dengan gaya Material 3 yang elegan (tampilkan nama barang dan peringatan bahwa aksi bersifat permanen). Sediakan helper static method agar mudah dipanggil dari mana saja."*
-
----
-
-### Track C: Fitur Fungsional CRUD
-
-#### Tugas 07: Fitur Pencarian (Search Bar)
+#### Tugas 09: Komponen Pencarian (Search Bar)
 > **Branch:** `feat/search-bar-<namamu>`  
-> **File Sasaran:** `lib/widgets/search_bar_widget.dart` & `lib/screens/inventaris_screen.dart`  
+> **Target File:** `lib/widgets/search_bar_widget.dart`  
 > **Prompt untuk AI:**
-> *"Tolong sambungkan `lib/widgets/search_bar_widget.dart` ke halaman `lib/screens/inventaris_screen.dart`. Implementasikan pencarian real-time sehingga daftar barang otomatis terfilter berdasarkan nama atau kode barang yang diketik pengguna secara case-insensitive."*
+> *"Tolong buat reusable widget `SearchBarWidget` di `lib/widgets/search_bar_widget.dart` dengan icon search dan tombol clear. Hubungkan ke `lib/screens/inventaris_screen.dart` agar daftar barang dapat difilter secara real-time berdasarkan pencarian nama atau kode barang secara case-insensitive."*
 
-#### Tugas 08: Fitur Filter Kondisi Stok
+#### Tugas 10: Komponen Filter Status Stok
 > **Branch:** `feat/filter-stok-<namamu>`  
-> **File Sasaran:** `lib/widgets/filter_stok_chips.dart` & `lib/screens/inventaris_screen.dart`  
+> **Target File:** `lib/widgets/filter_stok_chips.dart`  
 > **Prompt untuk AI:**
-> *"Tolong pasang widget filter `lib/widgets/filter_stok_chips.dart` di halaman `lib/screens/inventaris_screen.dart`. Hubungkan filter tersebut agar daftar barang yang tampil dapat difilter berdasarkan: Semua, Stok Kritis (<= 2), dan Stok Tersedia (> 2)."*
+> *"Tolong buat reusable widget `FilterStokChips` di `lib/widgets/filter_stok_chips.dart` menggunakan FilterChip/ChoiceChip dengan pilihan: 'Semua', 'Stok Kritis (<= 2)', dan 'Stok Tersedia (> 2)'. Pasang di `lib/screens/inventaris_screen.dart` untuk memfilter data yang tampil."*
 
-#### Tugas 09: Fitur Pengurutan (Sorting) Data
+#### Tugas 11: Fitur Pengurutan Data (Sorting)
 > **Branch:** `feat/sort-barang-<namamu>`  
-> **File Sasaran:** `lib/screens/inventaris_screen.dart`  
+> **Target File:** `lib/screens/inventaris_screen.dart`  
 > **Prompt untuk AI:**
-> *"Tolong tambahkan fitur urutkan data (Sort) di `lib/screens/inventaris_screen.dart`. Tambahkan PopupMenuButton di AppBar dengan pilihan: 'Nama (A-Z)', 'Nama (Z-A)', 'Stok Terbanyak', dan 'Stok Tersedikit'. Pastikan daftar barang langsung terurut sesuai pilihan."*
+> *"Tolong tambahkan menu pengurutan data di AppBar `lib/screens/inventaris_screen.dart` menggunakan PopupMenuButton dengan opsi: 'Nama (A-Z)', 'Nama (Z-A)', 'Stok Terbanyak', dan 'Stok Tersedikit'. Pastikan daftar barang otomatis tersortir sesuai pilihan pengguna."*
 
-#### Tugas 10: Halaman Rincian / Detail Barang
+#### Tugas 12: Halaman Rincian Lengkap Barang
 > **Branch:** `feat/detail-barang-<namamu>`  
-> **File Sasaran:** `lib/screens/detail_barang_screen.dart` & `lib/widgets/barang_card.dart`  
+> **Target File:** `lib/screens/detail_barang_screen.dart`  
 > **Prompt untuk AI:**
-> *"Tolong sempurnakan halaman rincian barang di `lib/screens/detail_barang_screen.dart`. Tambahkan navigasi dari `lib/widgets/barang_card.dart` ketika kartu barang ditekan (onTap). Tampilkan kartu info spesifikasi, status stok, dan tombol pintas ubah barang."*
+> *"Tolong buat halaman detail barang di `lib/screens/detail_barang_screen.dart`. Ketika kartu barang ditekan, buka halaman ini untuk menampilkan rincian kode, nama, jumlah stok, status ketersediaan, serta tombol shortcut untuk edit atau hapus. Jangan ubah `lib/main.dart`."*
 
----
-
-### Track D: Fitur Ekstra & Pengalaman Pengguna
-
-#### Tugas 11: Dark Mode / Tema Gelap & Terang
+#### Tugas 13: Konfigurasi Tema Terang & Gelap (Dark Mode)
 > **Branch:** `feat/dark-theme-<namamu>`  
-> **File Sasaran:** `lib/theme/app_theme.dart` & `lib/screens/inventaris_screen.dart`  
+> **Target File:** `lib/theme/app_theme.dart`  
 > **Prompt untuk AI:**
-> *"Tolong lengkapi konfigurasi tema di `lib/theme/app_theme.dart`. Tambahkan tombol toggle tema (ikon matahari/bulan) di AppBar `lib/screens/inventaris_screen.dart` yang dapat mengubah mode terang/gelap secara instan. Jangan ubah file `lib/main.dart`."*
+> *"Tolong buat konfigurasi tema Light Mode dan Dark Mode berbasis Material 3 di `lib/theme/app_theme.dart`. Sediakan tombol switch/toggle tema di AppBar `lib/screens/inventaris_screen.dart` untuk mengganti mode tampilan. Jangan ubah `lib/main.dart`."*
 
-#### Tugas 12: Ringkasan Statistik Inventaris (Dashboard Card)
-> **Branch:** `feat/statistik-card-<namamu>`  
-> **File Sasaran:** `lib/screens/statistik_screen.dart` & `lib/widgets/ringkasan_stok_widget.dart`  
+#### Tugas 14: Widget Ringkasan Statistik Stok (Dashboard Mini)
+> **Branch:** `feat/statistik-stok-<namamu>`  
+> **Target File:** `lib/widgets/ringkasan_stok_widget.dart`  
 > **Prompt untuk AI:**
-> *"Tolong kembangkan halaman `lib/screens/statistik_screen.dart` yang menggunakan `lib/widgets/ringkasan_stok_widget.dart`. Tampilkan metrik ringkas: Total Jenis Barang, Total Unit Fisik, dan Total Barang Kritis. Berikan tombol di AppBar halaman utama untuk membuka layar statistik ini."*
+> *"Tolong buat reusable widget `RingkasanStokWidget` di `lib/widgets/ringkasan_stok_widget.dart`. Tampilkan baris kartu mini yang merangkum: Total Jenis Barang, Total Unit Fisik, dan Jumlah Barang Kritis (stok <= 2). Hubungkan dengan data di `lib/screens/inventaris_screen.dart`."*
 
-#### Tugas 13: Fitur Bagikan / Salin Data Laporan (Share / Export)
-> **Branch:** `feat/export-laporan-<namamu>`  
-> **File Sasaran:** `lib/screens/inventaris_screen.dart` & `lib/utils/formatters.dart`  
+#### Tugas 15: Validasi Input & Pemformat Teks Terpusat
+> **Branch:** `feat/validators-formatters-<namamu>`  
+> **Target File:** `lib/utils/validators.dart` & `lib/utils/formatters.dart`  
 > **Prompt untuk AI:**
-> *"Tolong tambahkan fitur salin laporan inventaris ke clipboard pada `lib/screens/inventaris_screen.dart`. Gunakan helper format dari `lib/utils/formatters.dart`. Tambahkan ikon bagikan di AppBar yang ketika ditekan menyalin ringkasan seluruh daftar barang ke clipboard sistem (`Clipboard.setData`) dan memunculkan notifikasi SnackBar berhasil."*
+> *"Tolong buat fungsi validasi input di `lib/utils/validators.dart` (validasi kode barang min 3 karakter alfanumerik, nama min 3 huruf, stok angka positif) dan helper pemformatan di `lib/utils/formatters.dart`. Hubungkan validator ini ke `lib/screens/form_barang_screen.dart`."*
 
-#### Tugas 14: Fitur Penyesuaian Cepat Stok (+/- Cepat)
-> **Branch:** `feat/quick-stock-adjust-<namamu>`  
-> **File Sasaran:** `lib/widgets/barang_card.dart` & `lib/screens/inventaris_screen.dart`  
+#### Tugas 16: Pengujian Unit Testing & Dokumentasi README
+> **Branch:** `feat/test-dan-docs-<namamu>`  
+> **Target File:** `test/models/barang_test.dart` & `README.md`  
 > **Prompt untuk AI:**
-> *"Tolong tambahkan tombol aksi cepat tambah (+1) dan kurang (-1) stok langsung pada kartu barang di `lib/widgets/barang_card.dart`. Pastikan stok tidak bisa dikurangi di bawah 0 dan perubahan langsung tercermin pada state list barang."*
-
----
-
-### Track E: Testing & Dokumentasi
-
-#### Tugas 15: Unit Testing & Widget Testing
-> **Branch:** `feat/testing-<namamu>`  
-> **File Sasaran:** `test/models/barang_test.dart` & `test/utils/validators_test.dart`  
-> **Prompt untuk AI:**
-> *"Tolong buat pengujian unit test lengkap di `test/models/barang_test.dart` (menguji serialisasi JSON dan copyWith) serta `test/utils/validators_test.dart` (menguji validasi kode, nama, dan stok). Pastikan semua tes lulus saat dijalankan dengan `flutter test`."*
-
-#### Tugas 16: Dokumentasi Lengkap README & Panduan Demo
-> **Branch:** `feat/docs-readme-<namamu>`  
-> **File Sasaran:** `README.md`  
-> **Prompt untuk AI:**
-> *"Tolong perbarui file `README.md` utama dengan dokumentasi profesional: judul aplikasi, diagram arsitektur folder modular, ringkasan fitur CRUD, panduan instalasi dan menjalankan aplikasi, serta daftar kontributor tim kelas."*
+> *"Tolong buat unit test pengujian model `Barang` di `test/models/barang_test.dart` yang menguji serialisasi JSON dan method copyWith. Lalu perbarui `README.md` utama dengan dokumentasi lengkap alur aplikasi, screenshot demo, dan daftar kontributor tim. Pastikan `flutter test` lulus 100%."*
