@@ -27,20 +27,14 @@ class InisialisasiScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Inventaris Laboratorium'),
-      ),
+      appBar: AppBar(title: const Text('Inventaris Laboratorium')),
       body: const Center(
         child: Padding(
           padding: EdgeInsets.all(24.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(
-                Icons.handyman_outlined,
-                size: 64,
-                color: Colors.indigo,
-              ),
+              Icon(Icons.handyman_outlined, size: 64, color: Colors.indigo),
               SizedBox(height: 16),
               Text(
                 'Inisialisasi Proyek Berhasil',
