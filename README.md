@@ -1,17 +1,30 @@
 # informatika24_mobile
 
-A new Flutter project.
+Aplikasi Manajemen Inventaris Laboratorium berbasis Flutter & Material 3 untuk mata kuliah Pemrograman Mobile.
 
-## Getting Started
+---
 
-This project is a starting point for a Flutter application.
+## 📖 Panduan & Dokumen Penting
+- **Panduan Kontribusi & Daftar Tugas Tim**: Baca [CONTRIBUTING.md](CONTRIBUTING.md) untuk melihat daftar 16 tugas dan prompt siap pakai untuk AI.
+- **Aturan AI & Tim**: Baca [AGENTS.md](AGENTS.md) untuk pedoman arsitektur modular, aturan penamaan branch, dan konvensi commit.
+- **Template Pull Request**: Disediakan otomatis pada [.github/pull_request_template.md](.github/pull_request_template.md).
 
-A few resources to get you started if this is your first Flutter project:
+---
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+## 🚀 Memulai Proyek
+```bash
+# Ambil dependensi
+flutter pub get
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+# Jalankan analisis kode
+flutter analyze
+
+# Jalankan pengujian
+flutter test
+
+# Jalankan aplikasi
+flutter run
+```
+
+---
+*Catatan: Dokumentasi lengkap dan showcase fitur akan disempurnakan oleh kontributor pada Tugas 16.*
