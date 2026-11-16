@@ -1,17 +1,27 @@
 import 'package:flutter/material.dart';
 
 import '../models/barang.dart';
+import '../services/pref_service.dart';
 import '../widgets/barang_card.dart';
+import '../widgets/empty_state_widget.dart';
+import '../widgets/search_bar_widget.dart';
+import 'form_barang_screen.dart';
 
 class InventarisScreen extends StatefulWidget {
-  const InventarisScreen({super.key});
+  final PrefService? prefService;
+
+  const InventarisScreen({super.key, this.prefService});
 
   @override
   State<InventarisScreen> createState() => _InventarisScreenState();
 }
 
 class _InventarisScreenState extends State<InventarisScreen> {
-  // TAHAP 1: Inisialisasi data sementara di RAM.
+  PrefService? _prefService;
+  final TextEditingController _searchController = TextEditingController();
+  String _kataKunci = '';
+
+  // Inisialisasi data sementara di RAM
   final List<Barang> _barang = [
     const Barang(kode: 'BRG001', nama: 'Mouse',           jenis: 'Periferal',   stok: 5,  harga: 150000),
     const Barang(kode: 'BRG002', nama: 'Keyboard',        jenis: 'Periferal',   stok: 3,  harga: 350000),
@@ -33,15 +43,148 @@ class _InventarisScreenState extends State<InventarisScreen> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    try {
+      _prefService = widget.prefService ?? PrefService();
+      _muatData();
+    } catch (_) {
+      // Abaikan jika platform channel shared_preferences tidak tersedia (e.g. widget test)
+    }
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _muatData() async {
+    try {
+      final tersimpan = await _prefService?.muatBarang();
+      if (tersimpan != null && tersimpan.isNotEmpty && mounted) {
+        setState(() {
+          _barang
+            ..clear()
+            ..addAll(tersimpan);
+        });
+      }
+    } catch (_) {}
+  }
+
+  Future<void> _simpanKeStorage() async {
+    try {
+      await _prefService?.simpanBarang(_barang);
+    } catch (_) {}
+  }
+
+  List<Barang> get _barangTerfilter {
+    final kataKunci = _kataKunci.trim().toLowerCase();
+    if (kataKunci.isEmpty) return _barang;
+    return _barang.where((item) {
+      return item.nama.toLowerCase().contains(kataKunci) ||
+          item.kode.toLowerCase().contains(kataKunci) ||
+          item.jenis.toLowerCase().contains(kataKunci);
+    }).toList();
+  }
+
+  Future<void> _tambahBarang() async {
+    final hasil = await Navigator.push<Barang>(
+      context,
+      MaterialPageRoute(builder: (_) => const FormBarangScreen()),
+    );
+    if (!mounted || hasil == null) return;
+
+    final isKodeDuplikat = _barang.any(
+      (item) => item.kode.toLowerCase() == hasil.kode.toLowerCase(),
+    );
+    if (isKodeDuplikat) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Kode barang "${hasil.kode}" sudah digunakan!')),
+      );
+      return;
+    }
+
+    setState(() => _barang.add(hasil));
+    await _simpanKeStorage();
+
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('${hasil.nama} berhasil ditambahkan')),
+    );
+  }
+
+  Future<void> _ubahBarang(Barang barang) async {
+    final hasil = await Navigator.push<Barang>(
+      context,
+      MaterialPageRoute(builder: (_) => FormBarangScreen(barang: barang)),
+    );
+    if (!mounted || hasil == null) return;
+
+    final index = _barang.indexWhere((item) => item.kode == barang.kode);
+    if (index != -1) {
+      setState(() => _barang[index] = hasil);
+      await _simpanKeStorage();
+
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('${hasil.nama} berhasil diperbarui')),
+      );
+    }
+  }
+
+  Future<void> _konfirmasiHapus(Barang barang) async {
+    final konfirmasi = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Hapus Barang?'),
+        content: Text('Apakah Anda yakin ingin menghapus "${barang.nama}"?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Batal'),
+          ),
+          FilledButton(
+            style: FilledButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.error,
+              foregroundColor: Theme.of(context).colorScheme.onError,
+            ),
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Hapus'),
+          ),
+        ],
+      ),
+    );
+
+    if (konfirmasi != true || !mounted) return;
+
+    setState(() => _barang.removeWhere((item) => item.kode == barang.kode));
+    await _simpanKeStorage();
+
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('${barang.nama} berhasil dihapus')),
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final daftarTampil = _barangTerfilter;
     final int totalUnit = _barang.fold(0, (sum, item) => sum + item.stok);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Inventaris Laboratorium')),
+      appBar: AppBar(
+        title: const Text('Inventaris Laboratorium'),
+      ),
       body: Column(
         children: [
+          SearchBarWidget(
+            controller: _searchController,
+            onChanged: (value) => setState(() => _kataKunci = value),
+            onClear: () => setState(() => _kataKunci = ''),
+          ),
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+            padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -58,23 +201,32 @@ class _InventarisScreenState extends State<InventarisScreen> {
           ),
           Expanded(
             child: _barang.isEmpty
-                ? const Center(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.inventory_2_outlined, size: 48),
-                        SizedBox(height: 8),
-                        Text('Belum ada data barang'),
-                      ],
-                    ),
+                ? const EmptyStateWidget(
+                    judul: 'Belum ada data barang',
+                    pesan: 'Tekan tombol Tambah Barang untuk mulai mencatat inventaris.',
                   )
-                : ListView.builder(
-                    padding: const EdgeInsets.symmetric(vertical: 6),
-                    itemCount: _barang.length,
-                    itemBuilder: (context, i) => BarangCard(barang: _barang[i]),
-                  ),
+                : daftarTampil.isEmpty
+                    ? const EmptyStateWidget(
+                        icon: Icons.search_off_rounded,
+                        judul: 'Barang tidak ditemukan',
+                        pesan: 'Coba gunakan kata kunci pencarian yang lain.',
+                      )
+                    : ListView.builder(
+                        padding: const EdgeInsets.symmetric(vertical: 6),
+                        itemCount: daftarTampil.length,
+                        itemBuilder: (context, i) => BarangCard(
+                          barang: daftarTampil[i],
+                          onEdit: () => _ubahBarang(daftarTampil[i]),
+                          onDelete: () => _konfirmasiHapus(daftarTampil[i]),
+                        ),
+                      ),
           ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: _tambahBarang,
+        icon: const Icon(Icons.add),
+        label: const Text('Tambah Barang'),
       ),
     );
   }
