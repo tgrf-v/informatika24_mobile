@@ -14,11 +14,25 @@ class BarangCard extends StatelessWidget {
     this.onDelete,
   });
 
+  static IconData _ikonJenis(String jenis) => switch (jenis.toLowerCase()) {
+    'periferal' => Icons.mouse,
+    'layar' => Icons.monitor,
+    'komputer' => Icons.computer,
+    'presentasi' => Icons.videocam,
+    'kabel' => Icons.cable,
+    'jaringan' => Icons.router,
+    'daya' => Icons.battery_charging_full,
+    _ => Icons.inventory_2,
+  };
+
   @override
   Widget build(BuildContext context) {
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       child: ListTile(
+        leading: CircleAvatar(
+          child: Icon(_ikonJenis(barang.jenis)),
+        ),
         title: Text(barang.nama),
         subtitle: Text('${barang.kode} • ${barang.jenis} • Stok: ${barang.stok}'),
         trailing: (onEdit != null || onDelete != null)
