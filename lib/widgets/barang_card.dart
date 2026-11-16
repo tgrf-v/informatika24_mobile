@@ -27,13 +27,40 @@ class BarangCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isKritis = barang.stok <= 2;
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       child: ListTile(
         leading: CircleAvatar(
-          child: Icon(_ikonJenis(barang.jenis)),
+          backgroundColor: isKritis ? colorScheme.errorContainer : null,
+          child: Icon(
+            _ikonJenis(barang.jenis),
+            color: isKritis ? colorScheme.onErrorContainer : null,
+          ),
         ),
-        title: Text(barang.nama),
+        title: Row(
+          children: [
+            Expanded(child: Text(barang.nama)),
+            if (isKritis)
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                decoration: BoxDecoration(
+                  color: colorScheme.errorContainer,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  'Stok Kritis',
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    color: colorScheme.onErrorContainer,
+                  ),
+                ),
+              ),
+          ],
+        ),
         subtitle: Text('${barang.kode} • ${barang.jenis} • Stok: ${barang.stok}'),
         trailing: (onEdit != null || onDelete != null)
             ? Row(
