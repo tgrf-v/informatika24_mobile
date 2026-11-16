@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/barang.dart';
+import '../widgets/barang_card.dart';
 
 class InventarisScreen extends StatefulWidget {
   const InventarisScreen({super.key});
@@ -28,10 +29,47 @@ class _InventarisScreenState extends State<InventarisScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final int totalUnit = _barang.fold(0, (sum, item) => sum + item.stok);
+
     return Scaffold(
       appBar: AppBar(title: const Text('Inventaris Laboratorium')),
-      body: Center(
-        child: Text('Data awal: ${_barang.length} barang'),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  '${_barang.length} jenis barang',
+                  style: Theme.of(context).textTheme.titleSmall,
+                ),
+                Text(
+                  'Total: $totalUnit unit',
+                  style: Theme.of(context).textTheme.titleSmall,
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: _barang.isEmpty
+                ? const Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.inventory_2_outlined, size: 48),
+                        SizedBox(height: 8),
+                        Text('Belum ada data barang'),
+                      ],
+                    ),
+                  )
+                : ListView.builder(
+                    padding: const EdgeInsets.symmetric(vertical: 6),
+                    itemCount: _barang.length,
+                    itemBuilder: (context, i) => BarangCard(barang: _barang[i]),
+                  ),
+          ),
+        ],
       ),
     );
   }
