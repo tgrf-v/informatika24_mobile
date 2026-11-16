@@ -25,6 +25,11 @@ class _InventarisScreenState extends State<InventarisScreen> {
     const Barang(kode: 'BRG010', nama: 'Headset',         jenis: 'Periferal',   stok: 7,  harga: 250000),
     const Barang(kode: 'BRG011', nama: 'Webcam',          jenis: 'Periferal',   stok: 4,  harga: 400000),
     const Barang(kode: 'BRG012', nama: 'Kabel LAN',       jenis: 'Kabel',       stok: 15, harga: 25000),
+    const Barang(kode: 'BRG013', nama: 'Router Wi-Fi',    jenis: 'Jaringan',    stok: 3,  harga: 450000),
+    const Barang(kode: 'BRG014', nama: 'Flashdisk 64GB',  jenis: 'Periferal',   stok: 10, harga: 85000),
+    const Barang(kode: 'BRG015', nama: 'Printer Laser',   jenis: 'Periferal',   stok: 2,  harga: 2500000),
+    const Barang(kode: 'BRG016', nama: 'Kabel Power',     jenis: 'Kabel',       stok: 8,  harga: 35000),
+    const Barang(kode: 'BRG017', nama: 'Speaker',         jenis: 'Periferal',   stok: 4,  harga: 175000),
   ];
 
   @override
