@@ -121,10 +121,25 @@ class _InventarisScreenState extends State<InventarisScreen> {
     }).toList();
   }
 
+  String _generateKodeBaru() {
+    int maxNomor = 0;
+    for (final item in _barang) {
+      final match = RegExp(r'^BRG(\d+)$', caseSensitive: false).firstMatch(item.kode);
+      if (match != null) {
+        final nomor = int.tryParse(match.group(1) ?? '0') ?? 0;
+        if (nomor > maxNomor) maxNomor = nomor;
+      }
+    }
+    final berikutnya = maxNomor + 1;
+    return 'BRG${berikutnya.toString().padLeft(3, '0')}';
+  }
+
   Future<void> _tambahBarang() async {
     final hasil = await Navigator.push<Barang>(
       context,
-      MaterialPageRoute(builder: (_) => const FormBarangScreen()),
+      MaterialPageRoute(
+        builder: (_) => FormBarangScreen(kodeOtomatis: _generateKodeBaru()),
+      ),
     );
     if (!mounted || hasil == null) return;
 
