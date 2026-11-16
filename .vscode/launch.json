@@ -1,0 +1,33 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Flutter: Windows Desktop",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "deviceId": "windows"
+    },
+    {
+      "name": "Flutter: Chrome (Web)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "deviceId": "chrome",
+      "args": [
+        "--web-browser-flag", "--no-first-run",
+        "--web-browser-flag", "--no-default-browser-check"
+      ]
+    },
+    {
+      "name": "Flutter: Web Server (Port 8080)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "deviceId": "web-server",
+      "args": [
+        "--web-port", "8080"
+      ]
+    }
+  ]
+}
