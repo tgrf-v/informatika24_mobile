@@ -7,6 +7,16 @@ import '../widgets/empty_state_widget.dart';
 import '../widgets/search_bar_widget.dart';
 import 'form_barang_screen.dart';
 
+enum UrutanBarang {
+  namaAsc('Nama (A-Z)'),
+  namaDesc('Nama (Z-A)'),
+  stokDesc('Stok Terbanyak'),
+  stokAsc('Stok Tersedikit');
+
+  final String label;
+  const UrutanBarang(this.label);
+}
+
 class InventarisScreen extends StatefulWidget {
   final PrefService? prefService;
 
@@ -20,6 +30,7 @@ class _InventarisScreenState extends State<InventarisScreen> {
   PrefService? _prefService;
   final TextEditingController _searchController = TextEditingController();
   String _kataKunci = '';
+  UrutanBarang? _urutan;
 
   // Inisialisasi data sementara di RAM
   final List<Barang> _barang = [
@@ -113,12 +124,32 @@ class _InventarisScreenState extends State<InventarisScreen> {
 
   List<Barang> get _barangTerfilter {
     final kataKunci = _kataKunci.trim().toLowerCase();
-    if (kataKunci.isEmpty) return _barang;
-    return _barang.where((item) {
-      return item.nama.toLowerCase().contains(kataKunci) ||
-          item.kode.toLowerCase().contains(kataKunci) ||
-          item.jenis.toLowerCase().contains(kataKunci);
-    }).toList();
+    final hasil = kataKunci.isEmpty
+        ? List<Barang>.from(_barang)
+        : _barang.where((item) {
+            return item.nama.toLowerCase().contains(kataKunci) ||
+                item.kode.toLowerCase().contains(kataKunci) ||
+                item.jenis.toLowerCase().contains(kataKunci);
+          }).toList();
+
+    if (_urutan != null) {
+      switch (_urutan!) {
+        case UrutanBarang.namaAsc:
+          hasil.sort(
+            (a, b) => a.nama.toLowerCase().compareTo(b.nama.toLowerCase()),
+          );
+        case UrutanBarang.namaDesc:
+          hasil.sort(
+            (a, b) => b.nama.toLowerCase().compareTo(a.nama.toLowerCase()),
+          );
+        case UrutanBarang.stokDesc:
+          hasil.sort((a, b) => b.stok.compareTo(a.stok));
+        case UrutanBarang.stokAsc:
+          hasil.sort((a, b) => a.stok.compareTo(b.stok));
+      }
+    }
+
+    return hasil;
   }
 
   String _generateKodeBaru() {
@@ -221,6 +252,35 @@ class _InventarisScreenState extends State<InventarisScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Inventaris Laboratorium'),
+        actions: [
+          PopupMenuButton<UrutanBarang>(
+            icon: const Icon(Icons.sort_rounded),
+            tooltip: 'Urutkan Barang',
+            initialValue: _urutan,
+            onSelected: (pilihan) {
+              setState(() => _urutan = pilihan);
+            },
+            itemBuilder: (context) => UrutanBarang.values.map(
+              (urutan) => PopupMenuItem<UrutanBarang>(
+                value: urutan,
+                child: Row(
+                  children: [
+                    if (_urutan == urutan)
+                      Icon(
+                        Icons.check,
+                        size: 18,
+                        color: Theme.of(context).colorScheme.primary,
+                      )
+                    else
+                      const SizedBox(width: 18),
+                    const SizedBox(width: 8),
+                    Text(urutan.label),
+                  ],
+                ),
+              ),
+            ).toList(),
+          ),
+        ],
       ),
       body: Column(
         children: [
