@@ -1,17 +1,36 @@
-# mahasiswa
+# Inventaris Laboratorium
 
-A new Flutter project.
+Aplikasi mobile berbasis Flutter untuk membantu pengelolaan data inventaris barang laboratorium.
 
-## Getting Started
+## Fitur Aplikasi
 
-This project is a starting point for a Flutter application.
+- Menampilkan daftar barang inventaris.
+- Mencari barang berdasarkan nama.
+- Menambahkan data barang.
+- Mengedit data barang.
+- Menghapus data barang.
+- Menampilkan informasi stok dan kategori barang.
 
-A few resources to get you started if this is your first Flutter project:
+## Teknologi
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+- Flutter
+- Dart
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Menjalankan Aplikasi
+
+1. Pastikan Flutter sudah terpasang.
+2. Jalankan perintah:
+
+   ```bash
+   flutter pub get
+   ```
+
+3. Jalankan aplikasi:
+
+   ```bash
+   flutter run
+   ```
+
+## Pengembangan
+
+Proyek ini dikembangkan menggunakan Flutter sebagai bagian dari pembelajaran Pemrograman Mobile.

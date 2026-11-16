@@ -1,6 +1,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
+<<<<<<< HEAD
         android:label="mahasiswa"
+=======
+        android:label="informatika24_mobile"
+>>>>>>> 677be2c482adf15bda17cd741b5633216e86e730
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
