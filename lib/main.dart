@@ -15,7 +15,7 @@ class InventarisApp extends StatelessWidget {
       title: 'Inventaris Laboratorium',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF718873)),
         useMaterial3: true,
       ),
       home: const InventarisScreen(),
