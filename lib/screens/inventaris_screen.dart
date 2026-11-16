@@ -29,12 +29,36 @@ class _InventarisScreenState extends State<InventarisScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final int totalUnit = _barang.fold(0, (sum, item) => sum + item.stok);
+
     return Scaffold(
       appBar: AppBar(title: const Text('Inventaris Laboratorium')),
-      body: ListView.builder(
-        padding: const EdgeInsets.symmetric(vertical: 6),
-        itemCount: _barang.length,
-        itemBuilder: (context, i) => BarangCard(barang: _barang[i]),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  '${_barang.length} jenis barang',
+                  style: Theme.of(context).textTheme.titleSmall,
+                ),
+                Text(
+                  'Total: $totalUnit unit',
+                  style: Theme.of(context).textTheme.titleSmall,
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: ListView.builder(
+              padding: const EdgeInsets.symmetric(vertical: 6),
+              itemCount: _barang.length,
+              itemBuilder: (context, i) => BarangCard(barang: _barang[i]),
+            ),
+          ),
+        ],
       ),
     );
   }
