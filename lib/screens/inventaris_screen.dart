@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../models/barang.dart';
+import '../widgets/barang_card.dart';
 
 class InventarisScreen extends StatefulWidget {
   const InventarisScreen({super.key});
@@ -30,8 +31,10 @@ class _InventarisScreenState extends State<InventarisScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Inventaris Laboratorium')),
-      body: Center(
-        child: Text('Data awal: ${_barang.length} barang'),
+      body: ListView.builder(
+        padding: const EdgeInsets.symmetric(vertical: 6),
+        itemCount: _barang.length,
+        itemBuilder: (context, i) => BarangCard(barang: _barang[i]),
       ),
     );
   }
