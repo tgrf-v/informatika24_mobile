@@ -52,11 +52,22 @@ class _InventarisScreenState extends State<InventarisScreen> {
             ),
           ),
           Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.symmetric(vertical: 6),
-              itemCount: _barang.length,
-              itemBuilder: (context, i) => BarangCard(barang: _barang[i]),
-            ),
+            child: _barang.isEmpty
+                ? const Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.inventory_2_outlined, size: 48),
+                        SizedBox(height: 8),
+                        Text('Belum ada data barang'),
+                      ],
+                    ),
+                  )
+                : ListView.builder(
+                    padding: const EdgeInsets.symmetric(vertical: 6),
+                    itemCount: _barang.length,
+                    itemBuilder: (context, i) => BarangCard(barang: _barang[i]),
+                  ),
           ),
         ],
       ),
