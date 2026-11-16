@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../models/barang.dart';
 import '../widgets/barang_card.dart';
+import '../widgets/konfirmasi_hapus_dialog.dart';
 
 class InventarisScreen extends StatefulWidget {
   const InventarisScreen({super.key});
@@ -31,6 +32,23 @@ class _InventarisScreenState extends State<InventarisScreen> {
     const Barang(kode: 'BRG016', nama: 'Kabel Power',     jenis: 'Kabel',       stok: 8,  harga: 35000),
     const Barang(kode: 'BRG017', nama: 'Speaker',         jenis: 'Periferal',   stok: 4,  harga: 175000),
   ];
+
+  Future<void> _konfirmasiHapus(Barang barang) async {
+    final bool? dikonfirmasi = await showDialog<bool>(
+      context: context,
+      builder: (context) => KonfirmasiHapusDialog(namaBarang: barang.nama),
+    );
+
+    if (dikonfirmasi != true || !mounted) return;
+
+    final int index = _barang.indexOf(barang);
+    if (index == -1) return;
+
+    setState(() => _barang.removeAt(index));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('${barang.nama} berhasil dihapus')),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -71,7 +89,10 @@ class _InventarisScreenState extends State<InventarisScreen> {
                 : ListView.builder(
                     padding: const EdgeInsets.symmetric(vertical: 6),
                     itemCount: _barang.length,
-                    itemBuilder: (context, i) => BarangCard(barang: _barang[i]),
+                    itemBuilder: (context, i) => BarangCard(
+                      barang: _barang[i],
+                      onDelete: () => _konfirmasiHapus(_barang[i]),
+                    ),
                   ),
           ),
         ],
