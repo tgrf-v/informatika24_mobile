@@ -212,7 +212,7 @@ class _InventarisScreenState extends State<InventarisScreen> {
                         pesan: 'Coba gunakan kata kunci pencarian yang lain.',
                       )
                     : ListView.builder(
-                        padding: const EdgeInsets.symmetric(vertical: 6),
+                        padding: const EdgeInsets.fromLTRB(0, 6, 0, 88),
                         itemCount: daftarTampil.length,
                         itemBuilder: (context, i) => BarangCard(
                           barang: daftarTampil[i],
