@@ -25,6 +25,14 @@ class BarangCard extends StatelessWidget {
     _ => Icons.inventory_2,
   };
 
+  static String _formatRupiah(int nominal) {
+    final str = nominal.toString().replaceAllMapped(
+      RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))'),
+      (m) => '${m[1]}.',
+    );
+    return 'Rp $str';
+  }
+
   @override
   Widget build(BuildContext context) {
     final bool isKritis = barang.stok <= 2;
@@ -62,25 +70,34 @@ class BarangCard extends StatelessWidget {
           ],
         ),
         subtitle: Text('${barang.kode} • ${barang.jenis} • Stok: ${barang.stok}'),
-        trailing: (onEdit != null || onDelete != null)
-            ? Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  if (onEdit != null)
-                    IconButton(
-                      icon: const Icon(Icons.edit),
-                      tooltip: 'Ubah',
-                      onPressed: onEdit,
-                    ),
-                  if (onDelete != null)
-                    IconButton(
-                      icon: const Icon(Icons.delete),
-                      tooltip: 'Hapus',
-                      onPressed: onDelete,
-                    ),
-                ],
-              )
-            : null,
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(right: 4),
+              child: Text(
+                _formatRupiah(barang.harga),
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: colorScheme.primary,
+                ),
+              ),
+            ),
+            if (onEdit != null)
+              IconButton(
+                icon: const Icon(Icons.edit),
+                tooltip: 'Ubah',
+                onPressed: onEdit,
+              ),
+            if (onDelete != null)
+              IconButton(
+                icon: const Icon(Icons.delete),
+                tooltip: 'Hapus',
+                onPressed: onDelete,
+              ),
+          ],
+        ),
       ),
     );
   }
