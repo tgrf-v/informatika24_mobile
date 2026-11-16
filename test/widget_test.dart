@@ -5,6 +5,7 @@ void main() {
   testWidgets('InventarisApp smoke test', (WidgetTester tester) async {
     await tester.pumpWidget(const InventarisApp());
     expect(find.text('Inventaris Laboratorium'), findsOneWidget);
-    expect(find.text('Data awal: 12 barang'), findsOneWidget);
+    expect(find.text('Mouse'), findsOneWidget);
+    expect(find.text('BRG001 • Periferal • Stok: 5'), findsOneWidget);
   });
 }
