@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../models/barang.dart';
 
 class FormBarangScreen extends StatefulWidget {
   final Barang? barang;
+  final String? kodeOtomatis;
 
-  const FormBarangScreen({super.key, this.barang});
+  const FormBarangScreen({
+    super.key,
+    this.barang,
+    this.kodeOtomatis,
+  });
 
   @override
   State<FormBarangScreen> createState() => _FormBarangScreenState();
@@ -32,17 +38,35 @@ class _FormBarangScreenState extends State<FormBarangScreen> {
 
   bool get _isEditMode => widget.barang != null;
 
+  static String formatNominal(String value) {
+    final clean = value.replaceAll(RegExp(r'\D'), '');
+    if (clean.isEmpty) return '';
+    final number = int.tryParse(clean) ?? 0;
+    final s = number.toString();
+    final buffer = StringBuffer();
+    for (int i = 0; i < s.length; i++) {
+      if (i > 0 && (s.length - i) % 3 == 0) {
+        buffer.write('.');
+      }
+      buffer.write(s[i]);
+    }
+    return buffer.toString();
+  }
+
   @override
   void initState() {
     super.initState();
-    _kodeController = TextEditingController(text: widget.barang?.kode ?? '');
+    final kodeAwal = widget.barang?.kode ??
+        widget.kodeOtomatis ??
+        'BRG${(DateTime.now().millisecondsSinceEpoch % 1000).toString().padLeft(3, '0')}';
+    _kodeController = TextEditingController(text: kodeAwal);
     _namaController = TextEditingController(text: widget.barang?.nama ?? '');
     _stokController = TextEditingController(
       text: widget.barang?.stok.toString() ?? '',
     );
     _hargaController = TextEditingController(
       text: widget.barang != null && widget.barang!.harga > 0
-          ? widget.barang!.harga.toString()
+          ? formatNominal(widget.barang!.harga.toString())
           : '',
     );
 
@@ -66,12 +90,14 @@ class _FormBarangScreenState extends State<FormBarangScreen> {
   void _simpan() {
     if (!_formKey.currentState!.validate()) return;
 
+    final hargaBersih = _hargaController.text.replaceAll('.', '').trim();
+
     final barangHasil = Barang(
       kode: _kodeController.text.trim(),
       nama: _namaController.text.trim(),
       jenis: _jenis,
       stok: int.parse(_stokController.text.trim()),
-      harga: int.tryParse(_hargaController.text.trim()) ?? 0,
+      harga: int.tryParse(hargaBersih) ?? 0,
     );
 
     Navigator.pop(context, barangHasil);
@@ -90,12 +116,14 @@ class _FormBarangScreenState extends State<FormBarangScreen> {
           children: [
             TextFormField(
               controller: _kodeController,
-              readOnly: _isEditMode,
+              readOnly: true,
               textCapitalization: TextCapitalization.characters,
               decoration: InputDecoration(
-                labelText: 'Kode Barang',
+                labelText: _isEditMode ? 'Kode Barang' : 'Kode Barang (Otomatis)',
                 prefixIcon: const Icon(Icons.qr_code_2),
-                helperText: _isEditMode ? 'Kode barang tidak dapat diubah' : null,
+                helperText: _isEditMode
+                    ? 'Kode barang tidak dapat diubah'
+                    : 'Kode barang dibuat otomatis oleh sistem',
                 filled: true,
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
               ),
@@ -149,6 +177,7 @@ class _FormBarangScreenState extends State<FormBarangScreen> {
             TextFormField(
               controller: _stokController,
               keyboardType: TextInputType.number,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               decoration: InputDecoration(
                 labelText: 'Stok',
                 prefixIcon: const Icon(Icons.numbers),
@@ -170,16 +199,26 @@ class _FormBarangScreenState extends State<FormBarangScreen> {
             TextFormField(
               controller: _hargaController,
               keyboardType: TextInputType.number,
+              inputFormatters: [
+                FilteringTextInputFormatter.digitsOnly,
+                _RibuanInputFormatter(),
+              ],
               decoration: InputDecoration(
                 labelText: 'Harga (Opsional)',
                 prefixIcon: const Icon(Icons.payments_outlined),
+                prefixText: 'Rp ',
+                prefixStyle: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface,
+                  fontWeight: FontWeight.bold,
+                ),
                 hintText: '0',
                 filled: true,
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
               ),
               validator: (value) {
                 if (value == null || value.trim().isEmpty) return null;
-                final harga = int.tryParse(value.trim());
+                final clean = value.replaceAll('.', '').trim();
+                final harga = int.tryParse(clean);
                 if (harga == null) {
                   return 'Harga harus berupa angka';
                 }
@@ -204,6 +243,23 @@ class _FormBarangScreenState extends State<FormBarangScreen> {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _RibuanInputFormatter extends TextInputFormatter {
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    if (newValue.text.isEmpty) return newValue;
+    final clean = newValue.text.replaceAll(RegExp(r'\D'), '');
+    if (clean.isEmpty) return newValue.copyWith(text: '');
+    final formatted = _FormBarangScreenState.formatNominal(clean);
+    return TextEditingValue(
+      text: formatted,
+      selection: TextSelection.collapsed(offset: formatted.length),
     );
   }
 }

@@ -5,7 +5,18 @@ import '../services/pref_service.dart';
 import '../widgets/barang_card.dart';
 import '../widgets/empty_state_widget.dart';
 import '../widgets/search_bar_widget.dart';
+import '../widgets/top_banner_widget.dart';
 import 'form_barang_screen.dart';
+
+enum UrutanBarang {
+  namaAsc('Nama (A-Z)'),
+  namaDesc('Nama (Z-A)'),
+  stokDesc('Stok Terbanyak'),
+  stokAsc('Stok Tersedikit');
+
+  final String label;
+  const UrutanBarang(this.label);
+}
 
 class InventarisScreen extends StatefulWidget {
   final PrefService? prefService;
@@ -20,20 +31,9 @@ class _InventarisScreenState extends State<InventarisScreen> {
   PrefService? _prefService;
   final TextEditingController _searchController = TextEditingController();
   String _kataKunci = '';
+
   String _kategoriDipilih = 'Semua';
-  String? _urutan;
-
-  static const String _sortNamaAZ = 'Nama A–Z';
-  static const String _sortNamaZA = 'Nama Z–A';
-  static const String _sortStokSedikit = 'Stok paling sedikit';
-  static const String _sortStokBanyak = 'Stok paling banyak';
-
-  static const List<String> _daftarUrutan = [
-    _sortNamaAZ,
-    _sortNamaZA,
-    _sortStokSedikit,
-    _sortStokBanyak,
-  ];
+  UrutanBarang? _urutan;
 
   static const List<String> _kategoriProject = [
     'Semua',
@@ -49,13 +49,16 @@ class _InventarisScreenState extends State<InventarisScreen> {
 
   List<String> get _daftarKategori {
     final list = List<String>.from(_kategoriProject);
+
     for (final item in _barang) {
       if (!list.contains(item.jenis)) {
         list.add(item.jenis);
       }
     }
+
     return list;
   }
+
 
   // Inisialisasi data sementara di RAM
   final List<Barang> _barang = [
@@ -89,8 +92,41 @@ class _InventarisScreenState extends State<InventarisScreen> {
     }
   }
 
+  OverlayEntry? _overlayEntry;
+
+  void _tampilkanNotifikasiAtas({
+    required String pesan,
+    bool isError = false,
+  }) {
+    _overlayEntry?.remove();
+    _overlayEntry = null;
+
+    final overlay = Overlay.of(context);
+    final colorScheme = Theme.of(context).colorScheme;
+    final mediaQuery = MediaQuery.of(context);
+
+    late OverlayEntry entry;
+    entry = OverlayEntry(
+      builder: (ctx) => TopBannerWidget(
+        pesan: pesan,
+        isError: isError,
+        topPadding: mediaQuery.padding.top + kToolbarHeight,
+        backgroundColor: isError ? colorScheme.errorContainer : colorScheme.primaryContainer,
+        foregroundColor: isError ? colorScheme.onErrorContainer : colorScheme.onPrimaryContainer,
+        onDismissed: () {
+          entry.remove();
+          if (_overlayEntry == entry) _overlayEntry = null;
+        },
+      ),
+    );
+
+    _overlayEntry = entry;
+    overlay.insert(entry);
+  }
+
   @override
   void dispose() {
+    _overlayEntry?.remove();
     _searchController.dispose();
     super.dispose();
   }
@@ -116,50 +152,78 @@ class _InventarisScreenState extends State<InventarisScreen> {
 
   List<Barang> get _barangTerfilter {
     final kataKunci = _kataKunci.trim().toLowerCase();
-    final hasil = _barang.where((item) {
-      final cocokKataKunci = kataKunci.isEmpty ||
-          item.nama.toLowerCase().contains(kataKunci) ||
-          item.kode.toLowerCase().contains(kataKunci) ||
-          item.jenis.toLowerCase().contains(kataKunci);
-      final cocokKategori = _kategoriDipilih == 'Semua' ||
-          item.jenis.toLowerCase() == _kategoriDipilih.toLowerCase();
-      return cocokKataKunci && cocokKategori;
-    }).toList();
 
-    if (_urutan != null) {
-      switch (_urutan) {
-        case _sortNamaAZ:
-        case 'Nama A-Z':
-          hasil.sort((a, b) => a.nama.toLowerCase().compareTo(b.nama.toLowerCase()));
-          break;
-        case _sortNamaZA:
-        case 'Nama Z-A':
-          hasil.sort((a, b) => b.nama.toLowerCase().compareTo(a.nama.toLowerCase()));
-          break;
-        case _sortStokSedikit:
-        case 'Stok Tersedikit':
-          hasil.sort((a, b) {
-            final cmp = a.stok.compareTo(b.stok);
-            return cmp != 0 ? cmp : a.nama.toLowerCase().compareTo(b.nama.toLowerCase());
-          });
-          break;
-        case _sortStokBanyak:
-        case 'Stok Terbanyak':
-          hasil.sort((a, b) {
-            final cmp = b.stok.compareTo(a.stok);
-            return cmp != 0 ? cmp : a.nama.toLowerCase().compareTo(b.nama.toLowerCase());
-          });
-          break;
+final hasil = _barang.where((item) {
+  final cocokKataKunci = kataKunci.isEmpty ||
+      item.nama.toLowerCase().contains(kataKunci) ||
+      item.kode.toLowerCase().contains(kataKunci) ||
+      item.jenis.toLowerCase().contains(kataKunci);
+
+  final cocokKategori = _kategoriDipilih == 'Semua' ||
+      item.jenis.toLowerCase() == _kategoriDipilih.toLowerCase();
+
+  return cocokKataKunci && cocokKategori;
+}).toList();
+
+if (_urutan != null) {
+  switch (_urutan!) {
+    case UrutanBarang.namaAsc:
+      hasil.sort(
+        (a, b) => a.nama.toLowerCase().compareTo(b.nama.toLowerCase()),
+      );
+      break;
+
+    case UrutanBarang.namaDesc:
+      hasil.sort(
+        (a, b) => b.nama.toLowerCase().compareTo(a.nama.toLowerCase()),
+      );
+      break;
+
+    case UrutanBarang.stokAsc:
+      hasil.sort((a, b) {
+        final cmp = a.stok.compareTo(b.stok);
+        return cmp != 0
+            ? cmp
+            : a.nama.toLowerCase().compareTo(b.nama.toLowerCase());
+      });
+      break;
+
+    case UrutanBarang.stokDesc:
+      hasil.sort((a, b) {
+        final cmp = b.stok.compareTo(a.stok);
+        return cmp != 0
+            ? cmp
+            : a.nama.toLowerCase().compareTo(b.nama.toLowerCase());
+      });
+      break;
+  }
+}
+
       }
     }
 
     return hasil;
   }
 
+  String _generateKodeBaru() {
+    int maxNomor = 0;
+    for (final item in _barang) {
+      final match = RegExp(r'^BRG(\d+)$', caseSensitive: false).firstMatch(item.kode);
+      if (match != null) {
+        final nomor = int.tryParse(match.group(1) ?? '0') ?? 0;
+        if (nomor > maxNomor) maxNomor = nomor;
+      }
+    }
+    final berikutnya = maxNomor + 1;
+    return 'BRG${berikutnya.toString().padLeft(3, '0')}';
+  }
+
   Future<void> _tambahBarang() async {
     final hasil = await Navigator.push<Barang>(
       context,
-      MaterialPageRoute(builder: (_) => const FormBarangScreen()),
+      MaterialPageRoute(
+        builder: (_) => FormBarangScreen(kodeOtomatis: _generateKodeBaru()),
+      ),
     );
     if (!mounted || hasil == null) return;
 
@@ -167,8 +231,9 @@ class _InventarisScreenState extends State<InventarisScreen> {
       (item) => item.kode.toLowerCase() == hasil.kode.toLowerCase(),
     );
     if (isKodeDuplikat) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Kode barang "${hasil.kode}" sudah digunakan!')),
+      _tampilkanNotifikasiAtas(
+        pesan: 'Kode barang "${hasil.kode}" sudah digunakan!',
+        isError: true,
       );
       return;
     }
@@ -177,9 +242,7 @@ class _InventarisScreenState extends State<InventarisScreen> {
     await _simpanKeStorage();
 
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('${hasil.nama} berhasil ditambahkan')),
-    );
+    _tampilkanNotifikasiAtas(pesan: '${hasil.nama} berhasil ditambahkan ✓');
   }
 
   Future<void> _ubahBarang(Barang barang) async {
@@ -195,9 +258,7 @@ class _InventarisScreenState extends State<InventarisScreen> {
       await _simpanKeStorage();
 
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('${hasil.nama} berhasil diperbarui')),
-      );
+      _tampilkanNotifikasiAtas(pesan: '${hasil.nama} berhasil diperbarui ✓');
     }
   }
 
@@ -230,8 +291,9 @@ class _InventarisScreenState extends State<InventarisScreen> {
     await _simpanKeStorage();
 
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('${barang.nama} berhasil dihapus')),
+    _tampilkanNotifikasiAtas(
+      pesan: '${barang.nama} berhasil dihapus',
+      isError: true,
     );
   }
 
@@ -243,6 +305,35 @@ class _InventarisScreenState extends State<InventarisScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Inventaris Laboratorium'),
+        actions: [
+          PopupMenuButton<UrutanBarang>(
+            icon: const Icon(Icons.sort_rounded),
+            tooltip: 'Urutkan Barang',
+            initialValue: _urutan,
+            onSelected: (pilihan) {
+              setState(() => _urutan = pilihan);
+            },
+            itemBuilder: (context) => UrutanBarang.values.map(
+              (urutan) => PopupMenuItem<UrutanBarang>(
+                value: urutan,
+                child: Row(
+                  children: [
+                    if (_urutan == urutan)
+                      Icon(
+                        Icons.check,
+                        size: 18,
+                        color: Theme.of(context).colorScheme.primary,
+                      )
+                    else
+                      const SizedBox(width: 18),
+                    const SizedBox(width: 8),
+                    Text(urutan.label),
+                  ],
+                ),
+              ),
+            ).toList(),
+          ),
+        ],
       ),
       body: Column(
         children: [
@@ -339,7 +430,7 @@ class _InventarisScreenState extends State<InventarisScreen> {
                         pesan: 'Coba gunakan kata kunci pencarian yang lain.',
                       )
                     : ListView.builder(
-                        padding: const EdgeInsets.symmetric(vertical: 6),
+                        padding: const EdgeInsets.fromLTRB(0, 6, 0, 88),
                         itemCount: daftarTampil.length,
                         itemBuilder: (context, i) => BarangCard(
                           barang: daftarTampil[i],
