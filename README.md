@@ -4,12 +4,22 @@ Aplikasi Manajemen Inventaris Laboratorium Komputer berbasis **Flutter** dan **M
 
 ---
 
-## 📸 Antarmuka Aplikasi (Showcase)
+## 📱 Antarmuka Aplikasi (Mobile Showcase)
+
+<p align="center">
+  <img src="docs/screenshots/tampilan_utama.png" width="320" alt="Dashboard Utama Inventaris" />
+  &emsp;&emsp;
+  <img src="docs/screenshots/form_tambah_barang.png" width="320" alt="Formulir Tambah Barang" />
+</p>
+
+<p align="center">
+  <em>Kiri: Katalog Inventaris & Indikator Stok &emsp;|&emsp; Kanan: Formulir Tambah Barang & Generator Kode</em>
+</p>
+
+---
 
 ### 1. Dashboard Utama (Katalog Inventaris)
 Tampilan utama menyajikan daftar seluruh barang inventaris lengkap dengan kode aset, kategori jenis, stok fisik, estimasi harga satuan, serta status ketersediaan barang.
-
-![Dashboard Utama Inventaris](docs/screenshots/tampilan_utama.png)
 
 > **Fitur pada Dashboard Utama:**
 > - **Pencarian Instan:** Filter barang secara langsung berdasarkan nama, kode barang (`BRGxxx`), atau kategori jenis melalui bilah pencarian atas.
@@ -21,8 +31,6 @@ Tampilan utama menyajikan daftar seluruh barang inventaris lengkap dengan kode a
 
 ### 2. Formulir Tambah & Edit Barang
 Formulir input barang yang dilengkapi dengan generator kode otomatis serta validasi data terpusat.
-
-![Formulir Tambah Barang](docs/screenshots/form_tambah_barang.png)
 
 > **Fitur pada Formulir Barang:**
 > - **Kode Otomatis:** Sistem secara pintar mendeteksi ID terakhir dan membuat kode baru (contoh: `BRG018`) agar tidak terjadi duplikasi.
