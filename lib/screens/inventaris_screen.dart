@@ -31,7 +31,34 @@ class _InventarisScreenState extends State<InventarisScreen> {
   PrefService? _prefService;
   final TextEditingController _searchController = TextEditingController();
   String _kataKunci = '';
+
+  String _kategoriDipilih = 'Semua';
   UrutanBarang? _urutan;
+
+  static const List<String> _kategoriProject = [
+    'Semua',
+    'Periferal',
+    'Layar',
+    'Komputer',
+    'Presentasi',
+    'Kabel',
+    'Jaringan',
+    'Daya',
+    'Lainnya',
+  ];
+
+  List<String> get _daftarKategori {
+    final list = List<String>.from(_kategoriProject);
+
+    for (final item in _barang) {
+      if (!list.contains(item.jenis)) {
+        list.add(item.jenis);
+      }
+    }
+
+    return list;
+  }
+
 
   // Inisialisasi data sementara di RAM
   final List<Barang> _barang = [
@@ -125,28 +152,53 @@ class _InventarisScreenState extends State<InventarisScreen> {
 
   List<Barang> get _barangTerfilter {
     final kataKunci = _kataKunci.trim().toLowerCase();
-    final hasil = kataKunci.isEmpty
-        ? List<Barang>.from(_barang)
-        : _barang.where((item) {
-            return item.nama.toLowerCase().contains(kataKunci) ||
-                item.kode.toLowerCase().contains(kataKunci) ||
-                item.jenis.toLowerCase().contains(kataKunci);
-          }).toList();
 
-    if (_urutan != null) {
-      switch (_urutan!) {
-        case UrutanBarang.namaAsc:
-          hasil.sort(
-            (a, b) => a.nama.toLowerCase().compareTo(b.nama.toLowerCase()),
-          );
-        case UrutanBarang.namaDesc:
-          hasil.sort(
-            (a, b) => b.nama.toLowerCase().compareTo(a.nama.toLowerCase()),
-          );
-        case UrutanBarang.stokDesc:
-          hasil.sort((a, b) => b.stok.compareTo(a.stok));
-        case UrutanBarang.stokAsc:
-          hasil.sort((a, b) => a.stok.compareTo(b.stok));
+final hasil = _barang.where((item) {
+  final cocokKataKunci = kataKunci.isEmpty ||
+      item.nama.toLowerCase().contains(kataKunci) ||
+      item.kode.toLowerCase().contains(kataKunci) ||
+      item.jenis.toLowerCase().contains(kataKunci);
+
+  final cocokKategori = _kategoriDipilih == 'Semua' ||
+      item.jenis.toLowerCase() == _kategoriDipilih.toLowerCase();
+
+  return cocokKataKunci && cocokKategori;
+}).toList();
+
+if (_urutan != null) {
+  switch (_urutan!) {
+    case UrutanBarang.namaAsc:
+      hasil.sort(
+        (a, b) => a.nama.toLowerCase().compareTo(b.nama.toLowerCase()),
+      );
+      break;
+
+    case UrutanBarang.namaDesc:
+      hasil.sort(
+        (a, b) => b.nama.toLowerCase().compareTo(a.nama.toLowerCase()),
+      );
+      break;
+
+    case UrutanBarang.stokAsc:
+      hasil.sort((a, b) {
+        final cmp = a.stok.compareTo(b.stok);
+        return cmp != 0
+            ? cmp
+            : a.nama.toLowerCase().compareTo(b.nama.toLowerCase());
+      });
+      break;
+
+    case UrutanBarang.stokDesc:
+      hasil.sort((a, b) {
+        final cmp = b.stok.compareTo(a.stok);
+        return cmp != 0
+            ? cmp
+            : a.nama.toLowerCase().compareTo(b.nama.toLowerCase());
+      });
+      break;
+  }
+}
+
       }
     }
 
@@ -289,6 +341,65 @@ class _InventarisScreenState extends State<InventarisScreen> {
             controller: _searchController,
             onChanged: (value) => setState(() => _kataKunci = value),
             onClear: () => setState(() => _kataKunci = ''),
+          ),
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Row(
+              children: _daftarKategori.map((kategori) {
+                final isSelected = _kategoriDipilih == kategori;
+                return Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: ChoiceChip(
+                    label: Text(kategori),
+                    selected: isSelected,
+                    onSelected: (selected) {
+                      if (selected) {
+                        setState(() => _kategoriDipilih = kategori);
+                      }
+                    },
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 6, 16, 2),
+            child: Row(
+              children: [
+                const Icon(Icons.sort, size: 20),
+                const SizedBox(width: 8),
+                Text(
+                  'Urutkan:',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.w500,
+                      ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<String>(
+                      value: _urutan,
+                      hint: const Text('Pilih Urutan'),
+                      isDense: true,
+                      items: _daftarUrutan
+                          .map(
+                            (u) => DropdownMenuItem(
+                              value: u,
+                              child: Text(u),
+                            ),
+                          )
+                          .toList(),
+                      onChanged: (val) {
+                        if (val != null) {
+                          setState(() => _urutan = val);
+                        }
+                      },
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
