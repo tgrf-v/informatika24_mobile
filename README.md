@@ -1,105 +1,93 @@
-# 🖥️ Informatika 24 Mobile — Sistem Inventaris Laboratorium
+# Informatika 24 Mobile: Sistem Inventaris Laboratorium
 
-Aplikasi Manajemen Inventaris Laboratorium Komputer berbasis **Flutter** dan **Material 3** yang dirancang modular, responsif, dan mudah digunakan untuk pengelolaan aset laboratorium secara efisien.
+Aplikasi pencatatan dan pengelolaan inventaris laboratorium komputer menggunakan Flutter dan Material 3.
 
 ---
 
-## 📱 Antarmuka Aplikasi (Mobile Showcase)
+## Antarmuka Aplikasi
 
 <p align="center">
-  <img src="docs/screenshots/tampilan_utama.png" width="320" alt="Dashboard Utama Inventaris" />
+  <img src="docs/screenshots/tampilan_utama.png" width="300" alt="Dashboard Utama Inventaris" />
   &emsp;&emsp;
-  <img src="docs/screenshots/form_tambah_barang.png" width="320" alt="Formulir Tambah Barang" />
+  <img src="docs/screenshots/form_tambah_barang.png" width="300" alt="Formulir Tambah Barang" />
 </p>
 
 <p align="center">
-  <em>Kiri: Katalog Inventaris & Indikator Stok &emsp;|&emsp; Kanan: Formulir Tambah Barang & Generator Kode</em>
+  <em>Kiri: Katalog inventaris dan indikator stok. Kanan: Formulir input barang dan pembuatan kode otomatis.</em>
 </p>
 
----
+### 1. Katalog Inventaris
+Halaman utama menampilkan daftar seluruh barang inventaris lengkap dengan kode, kategori, stok, harga, serta tombol aksi.
 
-### 1. Dashboard Utama (Katalog Inventaris)
-Tampilan utama menyajikan daftar seluruh barang inventaris lengkap dengan kode aset, kategori jenis, stok fisik, estimasi harga satuan, serta status ketersediaan barang.
+- Pencarian: filter daftar berdasarkan nama, kode barang (`BRGxxx`), atau kategori.
+- Ringkasan: informasi total jenis barang dan akumulasi unit fisik yang terdata.
+- Peringatan stok kritis: label peringatan otomatis untuk barang dengan stok $\le 2$ unit.
+- Aksi cepat: tombol edit dan hapus langsung pada setiap kartu barang.
 
-> **Fitur pada Dashboard Utama:**
-> - **Pencarian Instan:** Filter barang secara langsung berdasarkan nama, kode barang (`BRGxxx`), atau kategori jenis melalui bilah pencarian atas.
-> - **Ringkasan Inventaris:** Menampilkan total jenis barang terdaftar dan akumulasi unit fisik secara otomatis (*real-time*).
-> - **Badge Stok Kritis:** Tanda peringatan merah otomatis (*Stok Kritis*) untuk barang dengan jumlah stok $\le 2$ unit agar memudahkan pengadaan ulang.
-> - **Aksi Cepat:** Tombol ubah data (edit) dan hapus barang langsung dari setiap kartu item.
+### 2. Formulir Barang
+Formulir untuk menambah atau memperbarui data barang inventaris.
 
----
-
-### 2. Formulir Tambah & Edit Barang
-Formulir input barang yang dilengkapi dengan generator kode otomatis serta validasi data terpusat.
-
-> **Fitur pada Formulir Barang:**
-> - **Kode Otomatis:** Sistem secara pintar mendeteksi ID terakhir dan membuat kode baru (contoh: `BRG018`) agar tidak terjadi duplikasi.
-> - **Pilihan Kategori Modular:** Dropdown kategori standar lab (Periferal, Layar, Komputer, Presentasi, Kabel, Jaringan, Daya, Lainnya).
-> - **Validasi Input Terpusat:** Memastikan kode unik, nama valid (minimal 3 karakter), dan stok bernilai non-negatif.
-> - **Notifikasi Status:** Banner notifikasi animasi di bagian atas (*Top Banner*) yang memberikan umpan balik langsung setelah data berhasil disimpan atau diperbarui.
+- Kode otomatis: sistem menentukan kode berikutnya (misal `BRG018`) berdasarkan data terakhir.
+- Kategori barang: pilihan kategori standar lab (Periferal, Layar, Komputer, Presentasi, Kabel, Jaringan, Daya, Lainnya).
+- Validasi input: memastikan nama minimal 3 karakter dan jumlah stok berupa angka non-negatif.
+- Konfirmasi dan notifikasi: dialog konfirmasi sebelum menghapus barang serta banner notifikasi setelah perubahan disimpan.
 
 ---
 
-## ✨ Fitur Unggulan
+## Fitur
 
-- 📦 **Manajemen Inventaris Penuh (CRUD):** Tambah barang baru, tinjau spesifikasi, ubah informasi, dan hapus barang dengan dialog konfirmasi aman.
-- 🔍 **Pencarian & Penyaringan Real-Time:** Filter dinamis tanpa jeda untuk mempercepat pencarian peralatan di lab.
-- ⚠️ **Sistem Deteksi Stok Kritis:** Pengingat otomatis untuk inventaris yang hampir habis.
-- 💾 **Penyimpanan Lokal Persisten:** Terintegrasi dengan `SharedPreferences` (`PrefService`) sehingga perubahan data tetap tersimpan saat aplikasi ditutup.
-- 🎨 **Material 3 Modern & Responsif:** Mengikuti standar desain terbaru Google dengan palet warna ramah mata, kartu melengkung (*rounded cards*), dan transisi halus di Web, Windows, maupun Android.
-- 🧪 **Pengujian Otomatis:** Didukung unit test dan widget test komprehensif (`flutter test`) dengan 0 error analisis (`flutter analyze`).
+- Operasi CRUD: tambah data barang baru, lihat detail, perbarui informasi, dan hapus barang.
+- Pencarian instan: menyaring data secara langsung melalui bilah pencarian.
+- Penanda stok kritis: penanda visual khusus untuk memudahkan pengadaan ulang aset lab yang menipis.
+- Penyimpanan persisten: integrasi `SharedPreferences` (`PrefService`) agar data tetap tersimpan saat aplikasi ditutup.
+- Tampilan Material 3: komponen UI standar Material 3 yang berjalan di Android, Web Chrome, dan Windows.
+- Pengujian otomatis: dilengkapi unit test dan widget test dengan status lolos analisis (`flutter analyze`).
 
 ---
 
-## 📁 Struktur Folder Proyek
-
-Arsitektur aplikasi dibangun dengan pendekatan modular terpisah:
+## Struktur Folder
 
 ```text
 lib/
-├── constants/         # Nilai konstan terpusat (warna, teks, batasan stok)
-├── models/            # Struktur data (Barang, Kategori, Riwayat)
-├── services/          # Layer penyimpanan data lokal (PrefService / SharedPreferences)
-├── theme/             # Konfigurasi visual Material 3 (AppTheme)
-├── utils/             # Helper validasi form & pemformatan teks/angka
-├── widgets/           # Komponen UI independen (BarangCard, SearchBar, TopBanner, EmptyState)
-├── screens/           # Halaman utama aplikasi (InventarisScreen, FormBarangScreen)
-└── main.dart          # Entry point tunggal aplikasi
+├── constants/         # Nilai konstan (warna, teks, batasan stok)
+├── models/            # Model data (Barang, Kategori, Riwayat)
+├── services/          # Layer penyimpanan lokal (PrefService / SharedPreferences)
+├── theme/             # Tema aplikasi Material 3 (AppTheme)
+├── utils/             # Validator input dan formatter teks
+├── widgets/           # Komponen antarmuka mandiri (BarangCard, SearchBar, TopBanner, EmptyState)
+├── screens/           # Layar tampilan (InventarisScreen, FormBarangScreen)
+└── main.dart          # Entry point aplikasi
 ```
 
 ---
 
-## 🚀 Panduan Menjalankan Aplikasi
+## Menjalankan Aplikasi
 
 ### Prasyarat
 - Flutter SDK (versi $\ge$ 3.24)
 - Google Chrome (untuk Web) atau C++ Desktop Development tools (untuk Windows)
 
-### Langkah-langkah
+### Langkah Menjalankan
 ```bash
-# 1. Clone repositori
-git clone https://github.com/tgrf-v/informatika24_mobile.git
-cd informatika24_mobile
-
-# 2. Pasang dependensi
+# 1. Pasang dependensi
 flutter pub get
 
-# 3. Jalankan verifikasi kode & pengujian
+# 2. Jalankan analisis kode dan pengujian
 flutter analyze
 flutter test
 
-# 4. Jalankan aplikasi di browser Chrome
+# 3. Jalankan aplikasi di Chrome
 flutter run -d chrome
 
-# Atau jalankan aplikasi di Windows Desktop
+# Atau jalankan di Windows Desktop
 flutter run -d windows
 ```
 
 ---
 
-## 🤝 Panduan Kontribusi & Tim
+## Kontribusi
 
-Bagi seluruh anggota tim mahasiswa yang ingin berkontribusi:
-1. Baca pedoman kontribusi dan daftar tugas di [CONTRIBUTING.md](CONTRIBUTING.md).
-2. Patuhi aturan arsitektur, konvensi penamaan branch, dan larangan edit `lib/main.dart` di [AGENTS.md](AGENTS.md).
-3. Buat Pull Request menggunakan template standar di [.github/pull_request_template.md](.github/pull_request_template.md).
+Bagi anggota tim yang mengerjakan tugas fitur:
+1. Periksa panduan kontribusi dan pembagian tugas di [CONTRIBUTING.md](CONTRIBUTING.md).
+2. Ikuti pedoman arsitektur modular dan aturan branching di [AGENTS.md](AGENTS.md).
+3. Buat Pull Request menggunakan template di [.github/pull_request_template.md](.github/pull_request_template.md).
