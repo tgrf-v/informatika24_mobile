@@ -130,7 +130,8 @@ class _InventarisScreenState extends State<InventarisScreen> {
         : _barang.where((item) {
             return item.nama.toLowerCase().contains(kataKunci) ||
                 item.kode.toLowerCase().contains(kataKunci) ||
-                item.jenis.toLowerCase().contains(kataKunci);
+                item.jenis.toLowerCase().contains(kataKunci) ||
+                item.deskripsi.toLowerCase().contains(kataKunci);
           }).toList();
 
     if (_urutan != null) {

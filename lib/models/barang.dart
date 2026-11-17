@@ -4,6 +4,7 @@ class Barang {
   final String jenis;
   final int stok;
   final int harga;
+  final String deskripsi;
 
   const Barang({
     required this.kode,
@@ -11,6 +12,7 @@ class Barang {
     required this.jenis,
     required this.stok,
     this.harga = 0,
+    this.deskripsi = '',
   });
 
   Barang copyWith({
@@ -18,6 +20,7 @@ class Barang {
     String? jenis,
     int? stok,
     int? harga,
+    String? deskripsi,
   }) =>
       Barang(
         kode: kode,
@@ -25,6 +28,7 @@ class Barang {
         jenis: jenis ?? this.jenis,
         stok: stok ?? this.stok,
         harga: harga ?? this.harga,
+        deskripsi: deskripsi ?? this.deskripsi,
       );
 
   Map<String, dynamic> toJson() => {
@@ -33,6 +37,7 @@ class Barang {
         'jenis': jenis,
         'stok': stok,
         'harga': harga,
+        'deskripsi': deskripsi,
       };
 
   factory Barang.fromJson(Map<String, dynamic> j) => Barang(
@@ -41,6 +46,7 @@ class Barang {
         jenis: j['jenis'] as String,
         stok: (j['stok'] as num).toInt(),
         harga: (j['harga'] as num?)?.toInt() ?? 0,
+        deskripsi: (j['deskripsi'] as String?) ?? '',
       );
 }
 
