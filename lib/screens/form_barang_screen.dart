@@ -34,6 +34,7 @@ class _FormBarangScreenState extends State<FormBarangScreen> {
   late final TextEditingController _namaController;
   late final TextEditingController _stokController;
   late final TextEditingController _hargaController;
+  late final TextEditingController _deskripsiController;
   late String _jenis;
 
   bool get _isEditMode => widget.barang != null;
@@ -69,6 +70,9 @@ class _FormBarangScreenState extends State<FormBarangScreen> {
           ? formatNominal(widget.barang!.harga.toString())
           : '',
     );
+    _deskripsiController = TextEditingController(
+      text: widget.barang?.deskripsi ?? '',
+    );
 
     final jenisAwal = widget.barang?.jenis;
     if (jenisAwal != null && _daftarJenis.contains(jenisAwal)) {
@@ -84,6 +88,7 @@ class _FormBarangScreenState extends State<FormBarangScreen> {
     _namaController.dispose();
     _stokController.dispose();
     _hargaController.dispose();
+    _deskripsiController.dispose();
     super.dispose();
   }
 
@@ -98,6 +103,7 @@ class _FormBarangScreenState extends State<FormBarangScreen> {
       jenis: _jenis,
       stok: int.parse(_stokController.text.trim()),
       harga: int.tryParse(hargaBersih) ?? 0,
+      deskripsi: _deskripsiController.text.trim(),
     );
 
     Navigator.pop(context, barangHasil);
@@ -227,6 +233,19 @@ class _FormBarangScreenState extends State<FormBarangScreen> {
                 }
                 return null;
               },
+            ),
+            const SizedBox(height: 16),
+            TextFormField(
+              controller: _deskripsiController,
+              maxLines: 3,
+              decoration: InputDecoration(
+                labelText: 'Deskripsi Barang (Opsional)',
+                hintText: 'Contoh: Spesifikasi, kondisi, atau catatan barang...',
+                prefixIcon: const Icon(Icons.description_outlined),
+                alignLabelWithHint: true,
+                filled: true,
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
+              ),
             ),
             const SizedBox(height: 28),
             FilledButton.icon(

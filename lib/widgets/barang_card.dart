@@ -69,7 +69,25 @@ class BarangCard extends StatelessWidget {
               ),
           ],
         ),
-        subtitle: Text('${barang.kode} • ${barang.jenis} • Stok: ${barang.stok}'),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('${barang.kode} • ${barang.jenis} • Stok: ${barang.stok}'),
+            if (barang.deskripsi.trim().isNotEmpty) ...[
+              const SizedBox(height: 2),
+              Text(
+                barang.deskripsi,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                  fontSize: 12,
+                  fontStyle: FontStyle.italic,
+                  color: colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ],
+          ],
+        ),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
