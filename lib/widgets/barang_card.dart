@@ -4,12 +4,14 @@ import '../models/barang.dart';
 
 class BarangCard extends StatelessWidget {
   final Barang barang;
+  final VoidCallback? onTap;
   final VoidCallback? onEdit;
   final VoidCallback? onDelete;
 
   const BarangCard({
     super.key,
     required this.barang,
+    this.onTap,
     this.onEdit,
     this.onDelete,
   });
@@ -41,6 +43,7 @@ class BarangCard extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       child: ListTile(
+        onTap: onTap,
         leading: CircleAvatar(
           backgroundColor: isKritis ? colorScheme.errorContainer : null,
           child: Icon(
