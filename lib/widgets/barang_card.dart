@@ -4,12 +4,14 @@ import '../models/barang.dart';
 
 class BarangCard extends StatelessWidget {
   final Barang barang;
+  final VoidCallback? onTap;
   final VoidCallback? onEdit;
   final VoidCallback? onDelete;
 
   const BarangCard({
     super.key,
     required this.barang,
+    this.onTap,
     this.onEdit,
     this.onDelete,
   });
