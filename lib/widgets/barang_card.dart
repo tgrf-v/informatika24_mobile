@@ -43,6 +43,7 @@ class BarangCard extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       child: ListTile(
+        onTap: onTap,
         leading: CircleAvatar(
           backgroundColor: isKritis ? colorScheme.errorContainer : null,
           child: Icon(
