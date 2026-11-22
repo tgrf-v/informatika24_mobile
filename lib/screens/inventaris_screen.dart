@@ -296,7 +296,9 @@ class _InventarisScreenState extends State<InventarisScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  '${_barang.length} jenis barang',
+                  _kataKunci.trim().isEmpty
+                      ? '${_barang.length} jenis barang'
+                      : 'Menampilkan ${daftarTampil.length} dari ${_barang.length} jenis',
                   style: Theme.of(context).textTheme.titleSmall,
                 ),
                 Text(
